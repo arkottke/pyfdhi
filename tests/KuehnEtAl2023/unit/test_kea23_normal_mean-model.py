@@ -13,10 +13,10 @@ import pytest
 # Module imports
 from pyfdhi.KuehnEtAl2023.data import POSTERIOR_MEAN
 from pyfdhi.KuehnEtAl2023.functions import (
-    func_mu,
     func_mode,
-    func_sd_mode_sigmoid,
+    func_mu,
     func_nm,
+    func_sd_mode_sigmoid,
 )
 
 # Test setup
@@ -59,9 +59,7 @@ def test_normal_mean_model(results_data):
             "sd_mode": func_sd_mode_sigmoid(coeffs, magnitude),
             "sd_u": coeffs["sigma"],
         }
-        computed_values["median"], computed_values["sd_tot"] = func_nm(
-            coeffs, magnitude, location
-        )
+        computed_values["median"], computed_values["sd_tot"] = func_nm(coeffs, magnitude, location)
 
         # Tests
         for key, expected in expected_values.items():

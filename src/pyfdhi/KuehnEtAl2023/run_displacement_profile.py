@@ -10,15 +10,14 @@
 Reference: https://doi.org/10.1177/ToBeAssigned
 """
 
-
 # Python imports
 import argparse
 import sys
 from pathlib import Path
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
-from typing import Union, List
 
 # Add path for project
 # FIXME: shouldn't need to do this!

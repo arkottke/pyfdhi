@@ -16,35 +16,28 @@ Reference: https://doi.org/10.1785/0120100248
 
 # Python imports
 import argparse
-import sys
 import warnings
 from pathlib import Path
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
 from scipy import stats
-from typing import Union, List
-
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
 
 # Module imports
-import MossRoss2011.model_config as model_config  # noqa: F401
+
+from pyfdhi.MossRoss2011.functions import (
+    _calc_distrib_params_d_ad,
+    _calc_distrib_params_d_md,
+    _calc_distrib_params_mag_ad,
+    _calc_distrib_params_mag_md,
+)
+
+import pyfdhi.MossRoss2011.model_config as model_config  # noqa: F401
 
 # Set numpy seed and number of samples
 SEED = model_config.NP_SEED
 N = model_config.N_SAMPLES
-
-
-from MossRoss2011.functions import (
-    _calc_distrib_params_mag_ad,
-    _calc_distrib_params_mag_md,
-    _calc_distrib_params_d_ad,
-    _calc_distrib_params_d_md,
-)
 
 
 def _calc_distribution_params_and_samples(*, magnitude, location, percentile, submodel):

@@ -10,13 +10,13 @@ Reference: https://doi.org/10.1785/BSSA0840040974
 # Python imports
 import argparse
 import warnings
+from itertools import product
 from pathlib import Path
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
-from itertools import product
 from scipy import stats
-from typing import Union, List
 
 # Module imports
 import pyfdhi.WellsCoppersmith1994.model_config as model_config  # noqa: F401
@@ -253,9 +253,7 @@ def main():
         print(results)
 
         # Prompt to save results to CSV
-        save_option = (
-            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
-        )
+        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

@@ -3,11 +3,11 @@
 # Python imports
 import matplotlib.pyplot as plt
 import pandas as pd
+import plot_functions
+import plot_style  # noqa: F401
 
 # Module imports
 import proj_setup
-import plot_functions
-import plot_style  # noqa: F401
 
 # Data imports
 RESULTS_FILES = {

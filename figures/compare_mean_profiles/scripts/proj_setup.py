@@ -1,5 +1,5 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Get script directories
 CWD = Path(sys.argv[0]).absolute().parent

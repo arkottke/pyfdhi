@@ -13,10 +13,10 @@ Reference: https://doi.org/10.1177/ToBeAssigned
 # Python imports
 import argparse
 from pathlib import Path
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
-from typing import Union, List
 
 # Module imports
 import pyfdhi.KuehnEtAl2023.model_config as model_config  # noqa: F401

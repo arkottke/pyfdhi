@@ -17,6 +17,6 @@ df_all = run_ad(magnitude=proj_setup.MAGS, style="all")
 dataframes = [df_ss, df_rv, df_nm, df_all]
 filenames = ["wc94_ss_ad.csv", "wc94_rv_ad.csv", "wc94_nm_ad.csv", "wc94_all_ad.csv"]
 
-for (file, df) in zip(filenames, dataframes):
+for file, df in zip(filenames, dataframes):
     fout = proj_setup.RESULTS_DIR / file
     df.to_csv(fout, index=False)

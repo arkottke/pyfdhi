@@ -13,8 +13,8 @@ import pytest
 # Module imports
 from pyfdhi.KuehnEtAl2023.data import POSTERIOR_MEAN
 from pyfdhi.KuehnEtAl2023.functions import (
-    func_mu,
     func_mode,
+    func_mu,
     func_sd_mode_bilinear,
     func_sd_u,
     func_ss,
@@ -60,9 +60,7 @@ def test_strike_slip_mean_model(results_data):
             "sd_mode": func_sd_mode_bilinear(coeffs, magnitude),
             "sd_u": func_sd_u(coeffs, location),
         }
-        computed_values["median"], computed_values["sd_tot"] = func_ss(
-            coeffs, magnitude, location
-        )
+        computed_values["median"], computed_values["sd_tot"] = func_ss(coeffs, magnitude, location)
 
         # Tests
         for key, expected in expected_values.items():

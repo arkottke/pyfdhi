@@ -20,13 +20,12 @@ Reference: https://doi.org/10.1193/1.1542891
 # Python imports
 import argparse
 from pathlib import Path
-
-import numpy as np
-import pandas as pd
-from typing import Union, List
+from typing import List, Union
 
 # Module imports
 import model_config  # noqa: F401
+import numpy as np
+import pandas as pd
 from run_displacement_model import run_model
 
 
@@ -205,9 +204,7 @@ def main():
         print(results)
 
         # Prompt to save results to CSV
-        save_option = (
-            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
-        )
+        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

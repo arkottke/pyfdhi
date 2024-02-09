@@ -1,8 +1,8 @@
 """ This script calculates a slip profile using the PEA11 models. """
 
 # Python imports
-import pandas as pd  # noqa: F401
 import numpy as np
+import pandas as pd  # noqa: F401
 
 # Module imports
 import proj_setup

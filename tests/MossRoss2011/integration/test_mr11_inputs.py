@@ -3,14 +3,12 @@ functions for the Moss and Ross (2011) models.
 """
 
 # Python imports
-from pathlib import Path
-
 import pytest
 
 # Module imports
 from pyfdhi.MossRoss2011.run_average_displacement import run_ad
-from pyfdhi.MossRoss2011.run_max_displacement import run_md
 from pyfdhi.MossRoss2011.run_displacement_model import run_model
+from pyfdhi.MossRoss2011.run_max_displacement import run_md
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
@@ -28,18 +26,14 @@ def test_input_style():
     with pytest.warns(UserWarning):
         run_ad(magnitude=mag, style=sof)
         run_md(magnitude=mag, style=sof)
-        run_model(
-            magnitude=mag, location=loc, percentile=ptile, submodel=model, style=sof
-        )
+        run_model(magnitude=mag, location=loc, percentile=ptile, submodel=model, style=sof)
 
     # Test with invalid style
     sof = ["normal", "Reverse"]
     with pytest.warns(UserWarning):
         run_ad(magnitude=mag, style=sof)
         run_md(magnitude=mag, style=sof)
-        run_model(
-            magnitude=mag, location=loc, percentile=ptile, submodel=model, style=sof
-        )
+        run_model(magnitude=mag, location=loc, percentile=ptile, submodel=model, style=sof)
 
 
 def test_input_submodel():

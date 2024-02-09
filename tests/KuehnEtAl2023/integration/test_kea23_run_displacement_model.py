@@ -9,10 +9,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-
 # Module imports
 from pyfdhi.KuehnEtAl2023.run_displacement_model import run_model
-
 
 # Test setup
 RTOL = 1e-2

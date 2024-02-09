@@ -1,8 +1,8 @@
 """ This script calculates a slip profile using the KEA23 model. """
 
 # Python imports
-import pandas as pd  # noqa: F401
 import numpy as np
+import pandas as pd  # noqa: F401
 
 # Module imports
 import proj_setup
@@ -43,6 +43,6 @@ for _y in y_vals:
 
 # Save
 filenames = ["kea23_ss_profile.csv", "kea23_rv_profile.csv", "kea23_nm_profile.csv"]
-for (file, df) in zip(filenames, dataframes):
+for file, df in zip(filenames, dataframes):
     fout = proj_setup.RESULTS_DIR / file
     df.to_csv(fout, index=False)

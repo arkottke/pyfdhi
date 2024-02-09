@@ -16,6 +16,6 @@ df_nm = run_ad(magnitude=proj_setup.MAGS, style="normal")
 dataframes = [df_ss, df_rv, df_nm]
 filenames = ["kea23_ss_ad.csv", "kea23_rv_ad.csv", "kea23_nm_ad.csv"]
 
-for (file, df) in zip(filenames, dataframes):
+for file, df in zip(filenames, dataframes):
     fout = proj_setup.RESULTS_DIR / file
     df.to_csv(fout, index=False)

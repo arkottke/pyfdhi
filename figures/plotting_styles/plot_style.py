@@ -1,6 +1,5 @@
 """This file defines the plot style for plots used in the report."""
 
-
 import matplotlib.pyplot as plt
 
 plt.style.use("default")

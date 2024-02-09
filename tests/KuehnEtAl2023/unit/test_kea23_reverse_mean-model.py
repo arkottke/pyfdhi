@@ -12,12 +12,7 @@ import pytest
 
 # Module imports
 from pyfdhi.KuehnEtAl2023.data import POSTERIOR_MEAN
-from pyfdhi.KuehnEtAl2023.functions import (
-    func_mu,
-    func_mode,
-    func_sd_u,
-    func_rv,
-)
+from pyfdhi.KuehnEtAl2023.functions import func_mode, func_mu, func_rv, func_sd_u
 
 # Test setup
 RTOL = 1e-2
@@ -59,9 +54,7 @@ def test_reverse_mean_model(results_data):
             "sd_mode": coeffs["s_m,r"],
             "sd_u": func_sd_u(coeffs, location),
         }
-        computed_values["median"], computed_values["sd_tot"] = func_rv(
-            coeffs, magnitude, location
-        )
+        computed_values["median"], computed_values["sd_tot"] = func_rv(coeffs, magnitude, location)
 
         # Tests
         for key, expected in expected_values.items():

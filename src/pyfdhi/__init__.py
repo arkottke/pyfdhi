@@ -1,6 +1,6 @@
-import pandas as pd
-
 from importlib.metadata import version
+
+import pandas as pd
 
 __author__ = "Alex Sarmiento"
 __copyright__ = "Copyright 2024 Alex Sarmiento"

@@ -11,13 +11,13 @@ Reference: https://doi.org/10.1785/BSSA0840040974
 import argparse
 import sys
 import warnings
+from itertools import product
 from pathlib import Path
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
-from itertools import product
 from scipy import stats
-from typing import Union, List
 
 # Add path for project
 # FIXME: shouldn't need to do this!

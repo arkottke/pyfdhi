@@ -4,9 +4,6 @@ Dr. Rui Chen in July 2021.
 """
 
 # Python imports
-import sys
-from pathlib import Path
-
 import numpy as np
 import pytest
 
@@ -32,9 +29,7 @@ def test_calc(load_data_as_recarray):
     mu_calc, sigma_calc = results
 
     # Comparing exepcted and calculated
-    np.testing.assert_allclose(
-        mu_expect, mu_calc, rtol=RTOL, err_msg="Discrepancy in mu values"
-    )
+    np.testing.assert_allclose(mu_expect, mu_calc, rtol=RTOL, err_msg="Discrepancy in mu values")
     np.testing.assert_allclose(
         sigma_expect, sigma_calc, rtol=RTOL, err_msg="Discrepancy in sigma values"
     )

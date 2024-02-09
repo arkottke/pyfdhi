@@ -1,6 +1,7 @@
-import numpy as np
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import numpy as np
 
 # Get script directories
 CWD = Path(sys.argv[0]).absolute().parent
