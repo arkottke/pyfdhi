@@ -26,8 +26,7 @@ sys.path.append(str(PROJ_DIR))
 del PROJ_DIR
 
 # Module imports
-import MossRoss2011.model_config as model_config  # noqa: F401
-from MossRoss2011.functions import _calc_distrib_params_mag_ad
+from .functions import _calc_distrib_params_mag_ad
 
 
 def run_ad(
@@ -80,6 +79,7 @@ def run_ad(
     """
 
     # Check for allowable styles, then over-ride
+    # FIXME: This says only strike-slip, but then normal is forced
     if style not in ("reverse", "Reverse"):
         warnings.warn(
             f"This model is only recommended for strike-slip faulting, but '{style}' was entered."

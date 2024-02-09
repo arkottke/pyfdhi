@@ -174,13 +174,15 @@ def run_model(
         )
 
     # Vectorize scenarios
-    scenarios = product(
-        [magnitude] if not isinstance(magnitude, (list, np.ndarray)) else magnitude,
-        [location] if not isinstance(location, (list, np.ndarray)) else location,
-        [percentile] if not isinstance(percentile, (list, np.ndarray)) else percentile,
-        [submodel] if not isinstance(submodel, (list, np.ndarray)) else submodel,
+    magnitude, location, percentile, submodel = map(
+        np.array,
+        # Need to have every parameter iterable. Simplest way to achieve this is np.atleast_1d
+        zip(
+            *product(
+                *[np.atleast_1d(param) for param in [magnitude, location, percentile, submodel]]
+            )
+        ),
     )
-    magnitude, location, percentile, submodel = map(np.array, zip(*scenarios))
 
     # Calculate distribution parameters
     mu, sigma = _calc_distrib_params(magnitude=magnitude, location=location, submodel=submodel)

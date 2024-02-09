@@ -24,8 +24,7 @@ import pandas as pd
 from scipy import stats
 
 # Module imports
-import pyfdhi.disp.KuehnEtAl2023.model_config as model_config  # noqa: F401
-from pyfdhi.disp.KuehnEtAl2023.params import _calculate_distribution_parameters
+from .params import _calculate_distribution_parameters
 
 
 def _calculate_Y(*, mu, sigma, lam, percentile):
@@ -200,13 +199,13 @@ def run_model(
                     )
 
     # Vectorize scenarios
-    scenarios = product(
-        [magnitude] if not isinstance(magnitude, (list, np.ndarray)) else magnitude,
-        [location] if not isinstance(location, (list, np.ndarray)) else location,
-        [percentile] if not isinstance(percentile, (list, np.ndarray)) else percentile,
-        [style] if not isinstance(style, (list, np.ndarray)) else style,
+    magnitude, location, percentile, style = map(
+        np.array,
+        # Need to have every parameter iterable. Simplest way to achieve this is np.atleast_1d
+        zip(
+            *product(*[np.atleast_1d(param) for param in [magnitude, location, percentile, style]])
+        ),
     )
-    magnitude, location, percentile, style = map(np.array, zip(*scenarios))
 
     # Get distribution parameters for site and complement
     mu_site, sigma_site, lam, model_number = _calculate_distribution_parameters(
@@ -235,6 +234,7 @@ def run_model(
     # NOTE: number of rows will be controlled by number of scenarios (if mean model) or number of coefficients (if full model)
     n = max(len(magnitude), len(mu_site))
     results = (
+        # FIXME: This was np.full, which provides a 2D array
         np.full(n, magnitude),
         np.full(n, location),
         np.full(n, style),
