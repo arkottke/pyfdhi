@@ -13,3 +13,5 @@ Spreadsheets/
 # Ignore Notebook outputs
 examples/*.csv
 examples/*.png
+
+.python-version
