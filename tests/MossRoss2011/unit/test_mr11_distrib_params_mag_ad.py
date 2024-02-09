@@ -1,17 +1,11 @@
 # Python imports
-import sys
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from MossRoss2011.functions import _calc_distrib_params_mag_ad
+from pyfdhi.MossRoss2011.functions import _calc_distrib_params_mag_ad
 
 # Test setup
 FUNCTION = _calc_distrib_params_mag_ad
@@ -31,7 +25,9 @@ def test_calc(load_data_as_recarray):
     mu_calc, sigma_calc = results
 
     # Comparing exepcted and calculated
-    np.testing.assert_allclose(mu_expect, mu_calc, rtol=RTOL, err_msg="Discrepancy in mu values")
+    np.testing.assert_allclose(
+        mu_expect, mu_calc, rtol=RTOL, err_msg="Discrepancy in mu values"
+    )
     np.testing.assert_allclose(
         sigma_expect, sigma_calc, rtol=RTOL, err_msg="Discrepancy in sigma values"
     )

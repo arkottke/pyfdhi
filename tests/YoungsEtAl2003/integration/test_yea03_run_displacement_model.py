@@ -9,13 +9,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice?!)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from YoungsEtAl2003.run_displacement_model import run_model
+from pyfdhi.YoungsEtAl2003.run_displacement_model import run_model
 
 # Test setup; higher tolerance required due to differences between sampling distributions (code) and integrating PDF (XLS)
 RTOL = 4e-2

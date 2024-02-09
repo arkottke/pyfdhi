@@ -4,19 +4,13 @@ Dr. Robb Moss in August 2021, and the results were computed by Alex Sarmiento in
 """
 
 # Python imports
-import sys
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from MossRoss2011.functions import _calc_distrib_params_d_md
+from pyfdhi.MossRoss2011.functions import _calc_distrib_params_d_md
 
 # Test setup
 FUNCTION = _calc_distrib_params_d_md

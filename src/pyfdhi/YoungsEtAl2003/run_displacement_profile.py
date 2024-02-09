@@ -1,48 +1,45 @@
-"""This file runs the PEA11 principal fault displacement model to create a slip profile.
+"""This file runs the YEA03 principal fault displacement model to create a slip profile.
 - Any number of scenarios are allowed (e.g., user can enter multiple magnitudes).
 - The results are returned in a pandas DataFrame.
-- Only the principal fault displacement models for direct (i.e., not normalized) predictions are
-implemented herein currently.
+- Results with full aleatory variability and with location-only aleatory variability are always returned.
+- The results with full aleatory variability are computed by convolving distributions for normalized
+displacement (based on magnitude) and normalization ratio (based on location) using the Monte Carlo sampling
+method described in Moss and Ross (2011).
+- Only the principal fault displacement models are implemented herein currently.
+- Only the D/AD relationship is implemented because the D/MD results on Figures 6 and 7a in Youngs
+et al. (2003) cannot be reproduced using the formulations and coefficients in the appendix.
+- The AD value used in YEA03 and herein is based on Wells and Coppersmith (1994) for all styles.
 - Command-line use is supported; try `python run_displacement_profile.py --help`
 - Module use is supported; try `from run_displacement_profile import run_profile`
 
 # NOTE: This script just loops over locations in `run_displacement_model.py`
 
-Reference: https://doi.org/10.1785/0120100035
+Reference: https://doi.org/10.1193/1.1542891
 """
-
 
 # Python imports
 import argparse
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from typing import Union, List
 
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
-
 # Module imports
-import PetersenEtAl2011.model_config as model_config  # noqa: F401
-from PetersenEtAl2011.run_displacement_model import run_model
+import model_config  # noqa: F401
+from run_displacement_model import run_model
 
 
 def run_profile(
     *,
     magnitude: Union[float, int, List[Union[float, int]], np.ndarray],
     percentile: Union[float, int, List[Union[float, int]], np.ndarray],
-    submodel: Union[str, List[str], np.ndarray] = "elliptical",
-    style: Union[str, List[str], np.ndarray] = "strike-slip",
+    submodel: Union[str, List[str], np.ndarray] = "d_ad",
+    style: Union[str, List[str], np.ndarray] = "normal",
     location_step: float = 0.05,
-    debug_bilinear_model: bool = False,
 ) -> pd.DataFrame:
     """
-    Run PEA11 principal fault displacement model to create slip profile. All parameters must be
+    Run YEA03 principal fault displacement model to create slip profile. All parameters must be
     passed as keyword arguments. Any number of scenarios (i.e., magnitude inputs, percentile
     inputs, etc.) are allowed.
 
@@ -54,22 +51,14 @@ def run_profile(
     percentile : Union[float, list, numpy.ndarray]
         Aleatory quantile value. Use -1 for mean.
 
-    submodel : Union[str, list, numpy.ndarray], optional
-        PEA11 shape model name  (case-insensitive). Default is "elliptical". Valid options are
-        "elliptical", "quadratic", or "bilinear".
+    submodel : Union[str, list, numpy.ndarray]
+        YEA03 normalization model name (case-insensitive). Valid options are "d_ad".
 
     style : Union[str, list, numpy.ndarray], optional
-        Style of faulting (case-insensitive). Default is "strike-slip".
+        Style of faulting (case-insensitive). Default is "normal".
 
     location_step : float, optional
         Profile step interval in percentage. Default 0.05.
-
-    debug_bilinear_model : bool, optional
-        If True, bilinear model will run for any percentile with a UserWarning. If False, bilinear
-        model results will be dropped for every percentile except median. Default False.
-
-        # NOTE: There is an issue with the bilinear model. The standard deviation changes across
-        ... l/L' and Figure 5b in PEA11 cannot be reproduced.
 
     Returns
     -------
@@ -79,25 +68,31 @@ def run_profile(
         - 'location':  Normalized location along rupture length [generated from location_step].
         - 'style': Style of faulting [from user input].
         - 'percentile': Aleatory quantile value [from user input].
-        - 'model_name': Profile shape model name [from user input].
-        - 'mu': Natural log transform of mean displacement in cm.
-        - 'sigma': Standard deviation in same units as `mu`.
-        - 'displ': Displacement in meters.
-
-    Raises (inherited from `run_displacement_model.py`)
-    ------
-    ValueError
-        If invalid `submodel` is provided.
+        - 'model_name': Normalization ratio model name [from user input].
+        - 'mu': Log10 transform of mean average or maximum displacement in m.
+        - 'sigma': Standard deviation of average or maximum displacement in same units as `mu`.
+        - 'alpha': Shape parameter for Gamma distribution (D/AD).
+        - 'beta': Scale parameter for Gamma distribution (D/AD).
+        - 'xd': Median predicted displacement for AD.
+        - 'd_xd': Normalization ratio D/AD for aleatory quantile.
+        - 'displ_without_aleatory': Displacement in meters without aleatory variability on magntiude.
+        - 'displ_with_aleatory': Displacement in meters with full aleatory variability.
 
     Warns  (inherited from `run_displacement_model.py`)
     -----
     UserWarning
-        If an unsupported `style` is provided. The user input will be over-ridden with "strike-slip".
+        If an unsupported `style` is provided. The user input will be over-ridden with "normal".
+
+    UserWarning
+        If an unsupported `submodel` is provided. The user input will be over-ridden with "d_ad".
 
     Notes
     ------
+    Only the D/AD relationship is implemented because the D/MD results on Figures 6 and 7a in Youngs
+        et al. (2003) cannot be reproduced using the formulations and coefficients in the appendix.
+
     Command-line interface usage
-        Run (e.g.) `python run_displacement_profile.py --magnitude 7 7.5 --percentile 0.5 -shape bilinear -step 0.01`
+        Run (e.g.) `python run_displacement_profile.py --magnitude 7 7.5 --percentile 0.5 -model d_md -step 0.01`
         Run `python run_displacement_profile.py --help`
 
     #TODO
@@ -118,7 +113,6 @@ def run_profile(
         percentile=percentile,
         submodel=submodel,
         style=style,
-        debug_bilinear_model=debug_bilinear_model,  # FIXME: bilinear model debugger issue
     )
 
     return dataframe.sort_values(
@@ -127,21 +121,25 @@ def run_profile(
 
 
 def main():
-    description_text = """Run PEA11 principal fault displacement model to create slip profile. Any
+    description_text = """Run YEA03 principal fault displacement model to create slip profile. Any
     number of scenarios are allowed (e.g., user can enter multiple magnitudes or submodels).
 
     Returns
     -------
-    pandas.DataFrame
-        A DataFrame with the following columns:
+    A DataFrame with the following columns:
         - 'magnitude': Earthquake moment magnitude [from user input].
         - 'location':  Normalized location along rupture length [generated from location_step].
         - 'style': Style of faulting [from user input].
         - 'percentile': Aleatory quantile value [from user input].
-        - 'model_name': Profile shape model name [from user input].
-        - 'mu': Natural log transform of mean displacement in cm.
-        - 'sigma': Standard deviation in same units as `mu`.
-        - 'displ': Displacement in meters.
+        - 'model_name': Normalization ratio model name [from user input].
+        - 'mu': Log10 transform of mean average or maximum displacement in m.
+        - 'sigma': Standard deviation of average or maximum displacement in same units as `mu`.
+        - 'alpha': Shape parameter for Gamma distribution (D/AD).
+        - 'beta': Scale parameter for Gamma distribution (D/AD).
+        - 'xd': Median predicted displacement for AD.
+        - 'd_xd': Normalization ratio D/AD for aleatory quantile.
+        - 'displ_without_aleatory': Displacement in meters without aleatory variability on magntiude.
+        - 'displ_with_aleatory': Displacement in meters with full aleatory variability.
     """
 
     parser = argparse.ArgumentParser(
@@ -164,21 +162,21 @@ def main():
         help="Aleatory quantile value. Use -1 for mean.",
     )
     parser.add_argument(
-        "-shape",
+        "-model",
         "--submodel",
-        default="elliptical",
+        default="d_ad",
         nargs="+",
         type=str.lower,
-        choices=("elliptical", "quadratic", "bilinear"),
-        help="PEA11 shape model name (case-insensitive). Default is 'elliptical'.",
+        choices=("d_ad"),
+        help="YEA03 normalization model name (case-insensitive). Default is 'd_ad'. Other models not implemented.",
     )
     parser.add_argument(
         "-s",
         "--style",
-        default="strike-slip",
+        default="normal",
         nargs="+",
         type=str.lower,
-        help="Style of faulting (case-insensitive). Default is 'strike-slip'; other styles not recommended.",
+        help="Style of faulting (case-insensitive). Default is 'normal'; other styles not recommended.",
     )
     parser.add_argument(
         "-step",
@@ -188,15 +186,6 @@ def main():
         help="Profile step interval in percentage. Default 0.05.",
     )
 
-    # FIXME: bilinear model debugger issue
-    parser.add_argument(
-        "--debug",
-        dest="debug_bilinear_model",
-        action="store_true",
-        help="Return bilinear results that are erroneous for debugging purposes.",
-        default=False,
-    )
-
     args = parser.parse_args()
 
     magnitude = args.magnitude
@@ -204,7 +193,6 @@ def main():
     submodel = args.submodel
     style = args.style
     location_step = args.location_step
-    debug = args.debug_bilinear_model  # FIXME: bilinear model debugger issue
 
     try:
         results = run_profile(
@@ -213,12 +201,13 @@ def main():
             submodel=submodel,
             style=style,
             location_step=location_step,
-            debug_bilinear_model=debug,  # FIXME: bilinear model debugger issue
         )
         print(results)
 
         # Prompt to save results to CSV
-        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        save_option = (
+            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        )
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

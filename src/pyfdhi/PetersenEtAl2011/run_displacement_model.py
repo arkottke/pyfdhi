@@ -9,7 +9,6 @@ implemented herein currently.
 Reference: https://doi.org/10.1785/0120100035
 """
 
-
 # Python imports
 import argparse
 import sys
@@ -22,15 +21,9 @@ from itertools import product
 from scipy import stats
 from typing import Union, List
 
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
-
 # Module imports
-import PetersenEtAl2011.model_config as model_config  # noqa: F401
-from PetersenEtAl2011.functions import (
+import pyfdhi.PetersenEtAl2011.model_config as model_config  # noqa: F401
+from pyfdhi.PetersenEtAl2011.functions import (
     _calc_distrib_params_elliptical,
     _calc_distrib_params_quadratic,
     _calc_distrib_params_bilinear,
@@ -65,9 +58,15 @@ def _calc_distrib_params(*, magnitude, location, submodel):
 
     # Calculate for all submodels
     # NOTE: it is actually faster to just do this instead of if/else, loops, etc.
-    result_elliptical = _calc_distrib_params_elliptical(magnitude=magnitude, location=location)
-    result_quadratic = _calc_distrib_params_quadratic(magnitude=magnitude, location=location)
-    result_bilinear = _calc_distrib_params_bilinear(magnitude=magnitude, location=location)
+    result_elliptical = _calc_distrib_params_elliptical(
+        magnitude=magnitude, location=location
+    )
+    result_quadratic = _calc_distrib_params_quadratic(
+        magnitude=magnitude, location=location
+    )
+    result_bilinear = _calc_distrib_params_bilinear(
+        magnitude=magnitude, location=location
+    )
 
     # Conditions for np.select
     conditions = [
@@ -171,7 +170,9 @@ def run_model(
         style = "strike-slip"
 
     # Check if there are any invalid submodels
-    submodel = [x.lower() for x in ([submodel] if isinstance(submodel, str) else submodel)]
+    submodel = [
+        x.lower() for x in ([submodel] if isinstance(submodel, str) else submodel)
+    ]
     supported_submodels = ["elliptical", "quadratic", "bilinear"]
     invalid_mask = ~np.isin(submodel, supported_submodels)
 
@@ -191,7 +192,9 @@ def run_model(
     magnitude, location, percentile, submodel = map(np.array, zip(*scenarios))
 
     # Calculate distribution parameters
-    mu, sigma = _calc_distrib_params(magnitude=magnitude, location=location, submodel=submodel)
+    mu, sigma = _calc_distrib_params(
+        magnitude=magnitude, location=location, submodel=submodel
+    )
 
     # Calculate natural log of displacement (vectorized approach)
     if np.any(percentile == -1):
@@ -349,7 +352,9 @@ def main():
         print(results)
 
         # Prompt to save results to CSV
-        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        save_option = (
+            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        )
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

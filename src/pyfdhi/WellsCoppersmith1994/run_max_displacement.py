@@ -1,15 +1,14 @@
-"""This file runs the WC94 model to calculate the average displacement as a function of magnitude.
+"""This file runs the WC94 model to calculate the maximum displacement as a function of magnitude.
 - Any number of scenarios are allowed (e.g., user can enter multiple magnitudes).
 - The results are returned in a pandas DataFrame.
-- Command-line use is supported; try `python run_average_displacement.py --help`
-- Module use is supported; try `from run_average_displacement import run_ad`
+- Command-line use is supported; try `python run_max_displacement.py --help`
+- Module use is supported; try `from run_max_displacement import run_md`
 
 Reference: https://doi.org/10.1785/BSSA0840040974
 """
 
 # Python imports
 import argparse
-import sys
 import warnings
 from pathlib import Path
 
@@ -19,15 +18,9 @@ from itertools import product
 from scipy import stats
 from typing import Union, List
 
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
-
 # Module imports
-import WellsCoppersmith1994.model_config as model_config  # noqa: F401
-from WellsCoppersmith1994.functions import _calc_distrib_params_mag_ad
+import pyfdhi.WellsCoppersmith1994.model_config as model_config  # noqa: F401
+from pyfdhi.WellsCoppersmith1994.functions import _calc_distrib_params_mag_md
 
 
 def _calc_distrib_params(*, magnitude, style):
@@ -56,10 +49,10 @@ def _calc_distrib_params(*, magnitude, style):
 
     # Calculate for all submodels
     # NOTE: it is actually faster to just do this instead of if/else, loops, etc.
-    result_ss = _calc_distrib_params_mag_ad(magnitude=magnitude, style="strike-slip")
-    result_rv = _calc_distrib_params_mag_ad(magnitude=magnitude, style="reverse")
-    result_nm = _calc_distrib_params_mag_ad(magnitude=magnitude, style="normal")
-    result_all = _calc_distrib_params_mag_ad(magnitude=magnitude, style="all")
+    result_ss = _calc_distrib_params_mag_md(magnitude=magnitude, style="strike-slip")
+    result_rv = _calc_distrib_params_mag_md(magnitude=magnitude, style="reverse")
+    result_nm = _calc_distrib_params_mag_md(magnitude=magnitude, style="normal")
+    result_all = _calc_distrib_params_mag_md(magnitude=magnitude, style="all")
 
     # Conditions for np.select
     conditions = [
@@ -80,14 +73,14 @@ def _calc_distrib_params(*, magnitude, style):
     return mu, sigma
 
 
-def run_ad(
+def run_md(
     *,
     magnitude: Union[float, int, List[Union[float, int]], np.ndarray],
     percentile: Union[float, int, List[Union[float, int]], np.ndarray] = 0.5,
     style: Union[str, List[str], np.ndarray] = "all",
 ) -> pd.DataFrame:
     """
-    Run WC94 model to calculate the average displacement as a function of magnitude. All parameters
+    Run WC94 model to calculate the maximum displacement as a function of magnitude. All parameters
     must be passed as keyword arguments. Any number of scenarios (i.e., magnitude inputs, style
     inputs, etc.) are allowed.
 
@@ -112,7 +105,7 @@ def run_ad(
         - 'percentile': Percentile value [from user input].
         - 'mu': Log10 transform of mean displacement in m.
         - 'sigma': Standard deviation in same units as `mu`.
-        - 'avg_displ': Average displacement in meters.
+        - 'max_displ': Maximum displacement in meters.
 
     Raises
     ------
@@ -127,8 +120,8 @@ def run_ad(
     Notes
     ------
     Command-line interface usage
-        Run (e.g.) `python run_average_displacement.py --magnitude 7 --style strike-slip all`
-        Run `python run_average_displacement.py --help`
+        Run (e.g.) `python run_max_displacement.py --magnitude 7 --style strike-slip all`
+        Run `python run_max_displacement.py --help`
 
     #TODO
     ------
@@ -195,7 +188,7 @@ def run_ad(
         "percentile": float,
         "mu": float,
         "sigma": float,
-        "avg_displ": float,
+        "max_displ": float,
     }
     dataframe = pd.DataFrame(np.column_stack(results), columns=cols_dict.keys())
     dataframe = dataframe.astype(cols_dict)
@@ -204,7 +197,7 @@ def run_ad(
 
 
 def main():
-    description_text = """Run WC94 model to calculate the average displacement as a function of
+    description_text = """Run WC94 model to calculate the maximum displacement as a function of
     magnitude. Any number of scenarios are allowed (e.g., user can enter multiple magnitudes or
     styles).
 
@@ -217,7 +210,7 @@ def main():
         - 'percentile': Aleatory quantile value [from user input].
         - 'mu': Log10 transform of mean displacement in m.
         - 'sigma': Standard deviation in same units as `mu`.
-        - 'avg_displ': Average displacement in meters.
+        - 'max_displ': Maximum displacement in meters.
     """
 
     parser = argparse.ArgumentParser(
@@ -256,11 +249,13 @@ def main():
     style = args.style
 
     try:
-        results = run_ad(magnitude=magnitude, percentile=percentile, style=style)
+        results = run_md(magnitude=magnitude, percentile=percentile, style=style)
         print(results)
 
         # Prompt to save results to CSV
-        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        save_option = (
+            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        )
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

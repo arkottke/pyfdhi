@@ -10,14 +10,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from KuehnEtAl2023.data import POSTERIOR_MEAN
-from KuehnEtAl2023.functions import (
+from pyfdhi.KuehnEtAl2023.data import POSTERIOR_MEAN
+from pyfdhi.KuehnEtAl2023.functions import (
     func_mu,
     func_mode,
     func_sd_mode_sigmoid,
@@ -64,7 +59,9 @@ def test_normal_mean_model(results_data):
             "sd_mode": func_sd_mode_sigmoid(coeffs, magnitude),
             "sd_u": coeffs["sigma"],
         }
-        computed_values["median"], computed_values["sd_tot"] = func_nm(coeffs, magnitude, location)
+        computed_values["median"], computed_values["sd_tot"] = func_nm(
+            coeffs, magnitude, location
+        )
 
         # Tests
         for key, expected in expected_values.items():

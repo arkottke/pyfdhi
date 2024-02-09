@@ -7,22 +7,12 @@ functions in `run_model()` and `run_probex()`.
 Reference: https://doi.org/10.1177/ToBeAssigned
 """
 
-# Python imports
-import sys
-from pathlib import Path
-
 import numpy as np
 
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
-
 # Module imports
-import KuehnEtAl2023.model_config as model_config  # noqa: F401
-from KuehnEtAl2023.data import POSTERIOR, POSTERIOR_MEAN
-from KuehnEtAl2023.functions import func_nm, func_rv, func_ss
+import pyfdhi.KuehnEtAl2023.model_config as model_config  # noqa: F401
+from pyfdhi.KuehnEtAl2023.data import POSTERIOR, POSTERIOR_MEAN
+from pyfdhi.KuehnEtAl2023.functions import func_nm, func_rv, func_ss
 
 
 def _calculate_distribution_parameters(*, magnitude, location, style, mean_model):
@@ -99,7 +89,6 @@ def _calculate_distribution_parameters(*, magnitude, location, style, mean_model
         return mu, sigma, lam, model_num
 
     else:
-
         # NOTE: Check for appropriate style is handled in `run_model`
         function_map = {"strike-slip": func_ss, "reverse": func_rv, "normal": func_nm}
 

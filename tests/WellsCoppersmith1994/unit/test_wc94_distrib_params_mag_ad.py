@@ -1,17 +1,11 @@
 # Python imports
-import sys
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from WellsCoppersmith1994 import functions as wc94
+from pyfdhi.WellsCoppersmith1994 import functions as wc94
 
 # Test setup
 FUNCTION = wc94._calc_distrib_params_mag_ad

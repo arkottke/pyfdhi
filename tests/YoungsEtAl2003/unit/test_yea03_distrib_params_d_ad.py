@@ -10,13 +10,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from YoungsEtAl2003.functions import _calc_distrib_params_d_ad
+from pyfdhi.YoungsEtAl2003.functions import _calc_distrib_params_d_ad
 
 # Test setup
 FUNCTION = _calc_distrib_params_d_ad

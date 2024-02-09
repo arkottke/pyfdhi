@@ -19,7 +19,6 @@ Reference: https://doi.org/10.1193/1.1542891
 
 # Python imports
 import argparse
-import sys
 import warnings
 from pathlib import Path
 
@@ -28,22 +27,15 @@ import pandas as pd
 from scipy import stats
 from typing import Union, List
 
-# Add path for project
-# FIXME: shouldn't need to do this!
-PROJ_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(PROJ_DIR))
-del PROJ_DIR
-
 # Module imports
-import YoungsEtAl2003.model_config as model_config  # noqa: F401
+import pyfdhi.YoungsEtAl2003.model_config as model_config
 
 # Set numpy seed and number of samples
 SEED = model_config.NP_SEED
 N = model_config.N_SAMPLES
 
-
-from WellsCoppersmith1994.functions import _calc_distrib_params_mag_ad
-from YoungsEtAl2003.functions import _calc_distrib_params_d_ad
+from pyfdhi.WellsCoppersmith1994.functions import _calc_distrib_params_mag_ad
+from pyfdhi.YoungsEtAl2003.functions import _calc_distrib_params_d_ad
 
 
 def _calc_distribution_params_and_samples(*, magnitude, location, percentile, submodel):
@@ -143,7 +135,9 @@ def _calc_distribution_params_and_samples(*, magnitude, location, percentile, su
     d_xd_samples = sampling_func(**kwargs)
 
     # Create index arrays for broadcasting
-    mag_idx, loc_idx, perc_idx = np.indices((magnitude.size, location.size, percentile.size))
+    mag_idx, loc_idx, perc_idx = np.indices(
+        (magnitude.size, location.size, percentile.size)
+    )
     mag_idx, loc_idx, perc_idx = [x.flatten() for x in (mag_idx, loc_idx, perc_idx)]
 
     # Broadcasting based on indicies; return as dictionary
@@ -189,7 +183,11 @@ def _calc_displacement_from_sample(*, percentile, convolded_sample):
     # Compute the aleatory quantile from the convolved sample
     percentile_displacement = np.array(
         [
-            np.percentile(row, 100 * percentile[idx]) if percentile[idx] != -1 else np.nan
+            (
+                np.percentile(row, 100 * percentile[idx])
+                if percentile[idx] != -1
+                else np.nan
+            )
             for idx, row in enumerate(convolded_sample)
         ]
     )
@@ -386,7 +384,9 @@ def _model_runner_helper(*, magnitude, location, percentile, style, submodel):
     # Combine dictionaries, remove sample arrays
     final_dict = {**full_results_dict, **simple_results_dict}
     final_dict = {
-        key: final_dict[key] for key in final_dict if key not in {"xd_samples", "d_xd_samples"}
+        key: final_dict[key]
+        for key in final_dict
+        if key not in {"xd_samples", "d_xd_samples"}
     }
 
     return final_dict
@@ -606,7 +606,9 @@ def main():
         print(results)
 
         # Prompt to save results to CSV
-        save_option = input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        save_option = (
+            input("Do you want to save the results to a CSV (yes/no)? ").strip().lower()
+        )
 
         if save_option in ["y", "yes"]:
             file_path = input("Enter filepath to save results: ").strip()

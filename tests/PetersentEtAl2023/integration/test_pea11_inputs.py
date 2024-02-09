@@ -8,13 +8,8 @@ from pathlib import Path
 
 import pytest
 
-# Add path for module
-# FIXME: shouldn't need this with a package install (`__init__` should suffice)
-PROJ_DIR = Path(__file__).resolve().parents[3]
-sys.path.append(str(PROJ_DIR))
-
 # Module imports
-from PetersenEtAl2011.run_displacement_model import run_model
+from pyfdhi.PetersenEtAl2011.run_displacement_model import run_model
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
