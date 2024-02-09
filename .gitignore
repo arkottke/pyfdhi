@@ -15,3 +15,9 @@ examples/*.csv
 examples/*.png
 
 .python-version
+
+# mkdocs
+site/
+
+# Coverage results
+.coverage

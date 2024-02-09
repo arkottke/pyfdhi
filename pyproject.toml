@@ -47,3 +47,20 @@ dependencies = ["black[jupyter]", "isort"]
 [tool.hatch.envs.style.scripts]
 check = ["black --check --diff .", "isort --check-only --diff ."]
 fmt = ["isort .", "black .", "check"]
+
+[tool.hatch.envs.docs]
+dependencies = [
+  "mkdocs",
+  "markdown-callouts",
+  "mkdocstrings[python]",
+  "mkdocs-bibtex",
+  "mkdocs-gen-files",
+  "mkdocs-literate-nav",
+  "mkdocs-material",
+  "mkdocs-section-index",
+  "mkdocs-jupyter",
+  "black[jupyter]",
+]
+[tool.hatch.envs.docs.scripts]
+build = "mkdocs build --clean --strict"
+serve = "mkdocs serve --dev-addr localhost:8000"
