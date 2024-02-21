@@ -18,7 +18,7 @@ requires-python = ">= 3.8"
 readme = "README.md"
 
 [project.scripts]
-pyfdhi = "pyfdhi.cli:cli"
+pyfdhi = "pyfdhi.cli:main"
 
 [tool.black]
 line-length = 99
